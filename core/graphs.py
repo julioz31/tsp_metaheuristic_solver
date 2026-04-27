@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
+from core.data_loader import load_cities_from_csv
 
 class Graphs:
     def __init__(self, frame_left, frame_right):
@@ -40,8 +41,26 @@ class Graphs:
 
         return list(zip(x, y)) # zwracamy listę miast dla algorytmów
 
-    def cities_doc(self): #metoda do tworzenia miast z pliku
-        pass
+    def cities_doc(self, list_of_cities): #metoda do tworzenia miast z pliku
+        self.ax_left.clear()  # wyczyszczamy wykresy
+        self.ax_right.clear()
+
+        x, y = zip(*list_of_cities) # rozpakujemy naszą listę koordynat
+
+        self.ax_left.scatter(x, y, color="Blue", s=30)
+        self.ax_right.scatter(x, y, color="Blue", s=30)
+
+        self.ax_left.set_xlim(0, 100)
+        self.ax_left.set_ylim(0, 100)
+        self.ax_right.set_xlim(0, 100)
+        self.ax_right.set_ylim(0, 100)
+
+        self.canvas_left.draw()  # rysujemy miasta
+        self.canvas_right.draw()
+
+
+
+
 
     def animation(self):
         pass

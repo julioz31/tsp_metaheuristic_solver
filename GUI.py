@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter import ttk, Button
 from core.graphs import Graphs
+from core.data_loader import load_cities_from_csv
 
 class Window(tk.Tk):
+    #------------------------------------------------------------
     def add_cities(self):
         try:
             input_value = self.random_gen_entry.get()
@@ -13,7 +15,7 @@ class Window(tk.Tk):
             ile = int(input_value)
             if ile > 2000:
                 ile = 2000
-                self.random_gen_entry.delete(0, tk.END)
+                self.random_gen_entry.delete(0, tk.END) # wyczysczamy entry
                 self.random_gen_entry.insert(0, "2000")
 
             self.graph_manager.cities_random(ile)
@@ -22,6 +24,14 @@ class Window(tk.Tk):
             from tkinter import messagebox
             messagebox.showwarning("Błąd. Wpisz liczbę całkowitą!")
 
+    def add_cities_file(self):
+        cities = load_cities_from_csv() # tu są zwracane miasta z funkcji
+        if cities:
+            self.graph_manager.cities_doc(cities) # przesyłamy do klasy wykresów
+
+            self.random_gen_entry.delete(0, tk.END) # wyczysczamy entry
+            self.random_gen_entry.insert(0, str(len(cities)))
+    # ------------------------------------------------------------
     def __init__(self):
         super().__init__()
         self.title("Środowisko testowe TSP")
@@ -53,7 +63,7 @@ class Window(tk.Tk):
         tk.Button(gen_frame, text="Dodać miasta", command=self.add_cities).pack(fill=tk.X)
 
         tk.Label(gen_frame, text="Operacje z plikami:", bg="#f0f0f0").pack(anchor="w", pady=(10, 0))
-        self.file_gen_button = tk.Button(gen_frame, text="Nagrać plik (.csv/.txt)")
+        self.file_gen_button = tk.Button(gen_frame, text="Nagrać plik (.csv)", command=self.add_cities_file)
         self.file_gen_button.pack(fill=tk.X, pady=2)
         self.manual_button = tk.Button(gen_frame, text="Przeczytać manual", font=("Arial", 8, "italic"))
         self.manual_button.pack(anchor="e")
