@@ -40,5 +40,8 @@ class Graphs:
 
         return list(zip(x, y)) # zwracamy listę miast dla algorytmów
 
-    def cities_doc(self):
+    def cities_doc(self): #metoda do tworzenia miast z pliku
+        pass
+
+    def animation(self):
         pass

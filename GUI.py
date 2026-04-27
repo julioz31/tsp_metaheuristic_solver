@@ -117,8 +117,6 @@ class Window(tk.Tk):
         self.canvas_right.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, padx=5, pady=5)
 
         self.graph_manager = Graphs(self.canvas_left, self.canvas_right)  # klasa do wykresów
-
-
         #-------------------------------------------------------------------------------
 
 
