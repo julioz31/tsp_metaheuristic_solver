@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, Button
+from tkinter import ttk, Button, Toplevel
 from core.graphs import Graphs
 from core.data_loader import load_cities_from_csv
 
@@ -31,6 +31,25 @@ class Window(tk.Tk):
 
             self.random_gen_entry.delete(0, tk.END) # wyczysczamy entry
             self.random_gen_entry.insert(0, str(len(cities)))
+
+    def manual(self):
+        new_window = Toplevel(self)
+        new_window.title("Manual")
+        new_window.geometry("300x200")
+
+        tk.Label(new_window, text="Jedyny akceptowalny typ pliku jest '*.csv'!"
+                 , font=("Arial", 11, "bold")).pack()
+        tk.Label(new_window, text="Najpierw jest koordynata x, potem y\n"
+                                  "Przykład:\n"
+                                  "x,y\n"
+                                  "10,20\n"
+                                  "50,80\n"
+                                  "30,40\n"
+                                  "90,10\n"
+                                  "75,60\n"
+                                  "30,90\n"
+                 , font=("Arial", 10)).pack(padx=5, pady=5)
+
     # ------------------------------------------------------------
     def __init__(self):
         super().__init__()
@@ -65,7 +84,7 @@ class Window(tk.Tk):
         tk.Label(gen_frame, text="Operacje z plikami:", bg="#f0f0f0").pack(anchor="w", pady=(10, 0))
         self.file_gen_button = tk.Button(gen_frame, text="Nagrać plik (.csv)", command=self.add_cities_file)
         self.file_gen_button.pack(fill=tk.X, pady=2)
-        self.manual_button = tk.Button(gen_frame, text="Przeczytać manual", font=("Arial", 8, "italic"))
+        self.manual_button = tk.Button(gen_frame, text="Przeczytać manual", command=self.manual, font=("Arial", 8, "italic"))
         self.manual_button.pack(anchor="e")
         # -------------------------------------------------------------------------------------------------------------------
         algo_frame = tk.LabelFrame(self.left_panel, text=" Ustawienia Algoritmów ", font=("Arial", 10, "bold"),
