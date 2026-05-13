@@ -1,7 +1,7 @@
 from math import dist
 from itertools import combinations
 import random as rd
-
+from random import random
 
 
 class Genetyczny_alg:
@@ -12,6 +12,7 @@ class Genetyczny_alg:
         self.generations = 100
         self.elitism = True
         self.tournament_size = 5
+        self.mutation = 0.05 #  domyślnie
 
     def dystans_miasta(self, cities):
         """kalkulacja dystansu pomiędzy miastami i wnisienie do słownika"""
@@ -35,7 +36,7 @@ class Genetyczny_alg:
         total += self.distances[(route[-1], route[0])]
         return total
 
-    def cost(self, route):
+    def koszt(self, route):
         """kalkulacja efektywności trasy według kosztu
         koszt = cała trasa/cały priorytet"""
         total_dist = self.total_dystans(route)
@@ -45,9 +46,9 @@ class Genetyczny_alg:
 
     def fitness(self, route):
         """ocena trasy: im mniejszy coszt tym większy fitness"""
-        ocena = self.cost(route)
+        ocena = self.koszt(route)
 
-        return 1 / (ocena + 1e-10)
+        return (1 / ocena) if ocena>0 else 0
 
 
     def populacja(self):
@@ -61,12 +62,12 @@ class Genetyczny_alg:
         return population
 
     def selekcja(self, population):
-        """selekcja turniejowa - szukamy zwycięca który ma największy fitness"""
+        """selekcja turniejowa - szukamy zwycięcę który ma największy fitness"""
         grupa = rd.sample(population, self.tournament_size)
         winner = max(grupa, key=self.fitness)
         return winner
 
-    def crossover(self, parent1, parent2):
+    def krzyzowanie(self, parent1, parent2):
         size = len(parent1)
         a,b = sorted(rd.sample(range(size), 2)) #wybieramy dwa dowolne punkty segmentu
 
@@ -82,10 +83,25 @@ class Genetyczny_alg:
 
         return child
 
-    def mutacja(self):
-        pass
+    def mutacja(self, route):
+        if rd.random() < self.mutation:
+            a = rd.randint(0, len(route)-1)
+            b = rd.randint(0, len(route)-1)
 
-    def generation(self):
+            if a == b:
+                return route
+
+            city1 = route[a]
+            city2 = route[b]
+
+            route[a] = city2
+            route[b] = city1
+
+            return route
+
+
+
+    def pokolenie(self):
         pass
 
 
