@@ -27,9 +27,10 @@ class Graphs:
 
         x = np.random.randint(0, 101, size = ile) #generujemy miasta
         y = np.random.randint(0, 101, size = ile)
+        priority = np.random.randint(0, 10, size = ile)
 
-        self.ax_left.scatter(x, y, color="Blue", s=30)
-        self.ax_right.scatter(x, y, color="Blue", s=30)
+        self.ax_left.scatter(x, y, color="Blue", s=priority)
+        self.ax_right.scatter(x, y, color="Blue", s=priority)
 
         self.ax_left.set_xlim(0, 100)
         self.ax_left.set_ylim(0, 100)
@@ -45,10 +46,12 @@ class Graphs:
         self.ax_left.clear()  # wyczyszczamy wykresy
         self.ax_right.clear()
 
-        x, y = zip(*list_of_cities) # rozpakujemy naszą listę koordynat
+        x, y, priority = zip(*list_of_cities) # rozpakujemy naszą listę koordynat
 
-        self.ax_left.scatter(x, y, color="Blue", s=30)
-        self.ax_right.scatter(x, y, color="Blue", s=30)
+        sizes = [20 + (val * 40) for val in priority] #rozmiar miasta zależy od prioritetu
+
+        self.ax_left.scatter(x, y, color="Blue", s=sizes)
+        self.ax_right.scatter(x, y, color="Blue", s=sizes)
 
         self.ax_left.set_xlim(0, 100)
         self.ax_left.set_ylim(0, 100)
