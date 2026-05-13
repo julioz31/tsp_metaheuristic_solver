@@ -61,21 +61,31 @@ class Genetyczny_alg:
         return population
 
     def selekcja(self, population):
+        """selekcja turniejowa - szukamy zwycięca który ma największy fitness"""
         grupa = rd.sample(population, self.tournament_size)
         winner = max(grupa, key=self.fitness)
         return winner
 
+    def crossover(self, parent1, parent2):
+        size = len(parent1)
+        a,b = sorted(rd.sample(range(size), 2)) #wybieramy dwa dowolne punkty segmentu
 
-    def crossover(self):
-        pass
+        child = [None] * size #tworzymy dziecka
+        child[a:b] = parent1[a:b] #kopiujemy część od pierwszego ojca
+        remaining = [item for item in parent2 if item not in child]
+
+        idx = 0
+        for i in range(size):
+            if child[i] is None:
+                child[i] = remaining[idx]
+                idx += 1
+
+        return child
 
     def mutacja(self):
         pass
 
     def generation(self):
         pass
-
-
-
 
 
