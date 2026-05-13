@@ -12,7 +12,7 @@ class Genetyczny_alg:
         self.generations = 100
         self.elitism = True
         self.tournament_size = 5
-        self.mutation = 0.05 #  domyślnie
+        self.mutation = 0.05
 
     def dystans_miasta(self, cities):
         """kalkulacja dystansu pomiędzy miastami i wnisienie do słownika"""
@@ -98,11 +98,32 @@ class Genetyczny_alg:
             route[a] = city2
             route[b] = city1
 
-            return route
+        return route
 
 
 
     def pokolenie(self):
-        pass
+        popul = self.populacja()
+        for i in range(self.generations):
+            new_popul = []
+
+            if self.elitism:
+                best = min(popul, key=self.koszt)
+                new_popul.append(best)
+            start_range = 1 if self.elitism else 0
+
+            for j in range(start_range, self.population_size):
+                parent1 = self.selekcja(popul)
+                parent2 = self.selekcja(popul)
+
+                child = self.krzyzowanie(parent1, parent2)
+                child = self.mutacja(child)
+
+                new_popul.append(child)
+
+            popul = new_popul
 
 
+
+        final_route = min(popul, key=self.koszt)
+        return final_route
