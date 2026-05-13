@@ -84,6 +84,7 @@ class Genetyczny_alg:
         return child
 
     def mutacja(self, route):
+        """mutowanie trasy: zmiania wybranych mist miejscami"""
         if rd.random() < self.mutation:
             a = rd.randint(0, len(route)-1)
             b = rd.randint(0, len(route)-1)
