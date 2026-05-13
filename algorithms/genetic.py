@@ -3,6 +3,7 @@ from itertools import combinations
 import random as rd
 
 
+
 class Genetyczny_alg:
     def __init__(self):
         self.list_of_cities = []
@@ -10,7 +11,7 @@ class Genetyczny_alg:
         self.population_size = 100
         self.generations = 100
         self.elitism = True
-        #self.calculate_total_distance = []
+        self.tournament_size = 5
 
     def dystans_miasta(self, cities):
         """kalkulacja dystansu pomiędzy miastami i wnisienie do słownika"""
@@ -59,10 +60,13 @@ class Genetyczny_alg:
 
         return population
 
-    def crossover(self):
-        pass
+    def selekcja(self, population):
+        grupa = rd.sample(population, self.tournament_size)
+        winner = max(grupa, key=self.fitness)
+        return winner
 
-    def selekcja(self):
+
+    def crossover(self):
         pass
 
     def mutacja(self):
