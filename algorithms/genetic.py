@@ -25,7 +25,14 @@ class Genetyczny_alg:
                     p1 = (cities[i][0], cities[i][1])
                     p2 = (cities[j][0], cities[j][1])
 
-                    self.distances[(i, j)] = dist(p1, p2)
+                    base_dist = dist(p1, p2)
+                    y1 = cities[i][1]
+                    y2 = cities[j][1]
+
+                    if y2 > y1:
+                        self.distances[(i, j)] = base_dist * 1.3
+                    else:
+                        self.distances[(i, j)] = base_dist
 
     def total_dystans(self, route):
         """kalkulacja całej śzieżki"""
