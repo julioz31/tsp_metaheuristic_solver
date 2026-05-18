@@ -27,7 +27,7 @@ class Graphs:
 
         x = np.random.randint(0, 101, size = ile) #generujemy miasta
         y = np.random.randint(0, 101, size = ile)
-        priority = np.random.randint(0, 10, size = ile)
+        priority = np.random.randint(1, 10, size = ile)
 
         self.ax_left.scatter(x, y, color="Blue", s=priority)
         self.ax_right.scatter(x, y, color="Blue", s=priority)
