@@ -1,10 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, Button, Toplevel
-import random
-import time
 from core.graphs import Graphs
 from core.data_loader import load_cities_from_csv
-from algorithms.genetic import Genetyczny_alg
 
 
 class Window(tk.Tk):
@@ -22,9 +19,7 @@ class Window(tk.Tk):
                 self.random_gen_entry.delete(0, tk.END) # wyczysczamy entry
                 self.random_gen_entry.insert(0, "2000")
 
-            self.cities = [(random.randint(50, 850), random.randint(50, 550), random.randint(1, 10)) for i in range(ile)]
-
-            self.graph_manager.cities_doc(self.cities)
+            self.graph_manager.cities_random(ile)
 
         except ValueError:
             from tkinter import messagebox
@@ -33,15 +28,10 @@ class Window(tk.Tk):
     def add_cities_file(self):
         cities = load_cities_from_csv() # tu są zwracane miasta z funkcji
         if cities:
-            self.cities = []
-            for c in cities:
-                if len(c) < 3:
-                    self.cities.append((c[0], c[1], random.randint(1, 10)))
-
-            self.graph_manager.cities_doc(self.cities) # przesyłamy do klasy wykresów
+            self.graph_manager.cities_doc(cities) # przesyłamy do klasy wykresów
 
             self.random_gen_entry.delete(0, tk.END) # wyczysczamy entry
-            self.random_gen_entry.insert(0, str(len(self.cities)))
+            self.random_gen_entry.insert(0, str(len(cities)))
 
     def manual(self):
         new_window = Toplevel(self)
@@ -60,11 +50,6 @@ class Window(tk.Tk):
                                   "75,60\n"
                                   "30,90\n"
                  , font=("Arial", 10)).pack(padx=5, pady=5)
-
-    def start_algorithm(self):
-        pass
-
-
 
     # ------------------------------------------------------------
     def __init__(self):

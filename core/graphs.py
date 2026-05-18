@@ -40,7 +40,7 @@ class Graphs:
         self.canvas_left.draw() # rysujemy miasta
         self.canvas_right.draw()
 
-        return list(zip(x, y)) # zwracamy listę miast dla algorytmów
+        return list(zip(x, y, priority)) # zwracamy listę miast dla algorytmów
 
     def cities_doc(self, list_of_cities): #metoda do tworzenia miast z pliku
         self.ax_left.clear()  # wyczyszczamy wykresy
@@ -61,7 +61,17 @@ class Graphs:
         self.canvas_left.draw()  # rysujemy miasta
         self.canvas_right.draw()
 
+    def clear_graphs(self):
+        self.ax_left.clear() # wyczyszczamy wykresy
+        self.ax_right.clear()
 
+        self.ax_left.set_xlim(0, 100)
+        self.ax_left.set_ylim(0, 100)
+        self.ax_right.set_xlim(0, 100)
+        self.ax_right.set_ylim(0, 100)
+
+        self.canvas_left.draw() # rysujemy czyste wykresy
+        self.canvas_right.draw()
 
 
 
