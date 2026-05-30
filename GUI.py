@@ -51,6 +51,30 @@ class Window(tk.Tk):
                                   "30,90, 2\n"
                  , font=("Arial", 10)).pack(padx=5, pady=5)
 
+    def show_gen_param(self):
+        pass
+
+    def show_ant_param(self):
+        pass
+
+    def show_firefly_param(self):
+        pass
+
+    def parameters_chooser(self, event):
+        chosen = self.algorithm_dropdown.get()
+
+        if chosen == 'Genetyczny':
+            self.show_gen_param()
+        elif chosen == 'Mrówkowy':
+            self.show_ant_param()
+        elif chosen == 'Świetlika':
+            self.show_firefly_param()
+        else:
+            print('Błąd')
+
+
+
+
     # ------------------------------------------------------------
     def __init__(self):
         super().__init__()
