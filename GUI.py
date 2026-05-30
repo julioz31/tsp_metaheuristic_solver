@@ -92,6 +92,16 @@ class Window(tk.Tk):
                                    bg="#f0f0f0", padx=10, pady=10)
         algo_frame.pack(fill=tk.X, padx=10, pady=5)
 
+        self.anim_var = tk.BooleanVar(value=True)
+        self.anim_checkbox = tk.Checkbutton(algo_frame, text="Wizualizacja na żywo", variable=self.anim_var,
+                                            bg="#f0f0f0")
+        self.anim_checkbox.pack(pady=(10, 0), anchor="w")
+
+        tk.Label(algo_frame, text="Krok odświeżania (iteracje):", bg="#f0f0f0").pack(anchor="w", pady=(5, 0))
+        self.anim_step_scale = tk.Scale(algo_frame, from_=1, to=50, orient=tk.HORIZONTAL, bg="#f0f0f0", resolution=1)
+        self.anim_step_scale.set(10)  # domyślnie 10
+        self.anim_step_scale.pack(fill=tk.X, pady=5)
+
         tk.Label(algo_frame, text="Wybrany Algorytm:", bg="#f0f0f0").pack(anchor="w")
         self.algorithm_dropdown = ttk.Combobox(algo_frame, values=['Genetyczny', 'Mrówkowy', 'Świetlika'],
                                                state="readonly")
@@ -103,7 +113,7 @@ class Window(tk.Tk):
         #tk.Label(self.params_container, text="(Tu się pojawią parametry)", fg="gray", bg="#f0f0f0").pack()
         # -------------------------------------------------------------------------------------------------------------------
         #--------------------------------------------------------------------------------------------------------------------
-        #parametres for genetec
+        #parametres for genetic
         self.Population_L = tk.Label(self.params_container, text="Rozmiar populacji: ")
         self.Population_L.pack()
         self.Population_Entry = tk.Entry(self.params_container, width = 25)
