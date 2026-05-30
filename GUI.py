@@ -100,11 +100,30 @@ class Window(tk.Tk):
 
         self.params_container = tk.Frame(algo_frame, bg="#f0f0f0")
         self.params_container.pack(fill=tk.X, pady=5)
-        tk.Label(self.params_container, text="(Tu się pojawią parametry)", fg="gray", bg="#f0f0f0").pack()
+        #tk.Label(self.params_container, text="(Tu się pojawią parametry)", fg="gray", bg="#f0f0f0").pack()
         # -------------------------------------------------------------------------------------------------------------------
-        #tk.Label(self.left_panel, text="Parameters: ", font=("Arial", 11, "bold"), bg="#f0f0f0").pack(pady=5)
+        #--------------------------------------------------------------------------------------------------------------------
         #parametres for genetec
-
+        self.Population_L = tk.Label(self.params_container, text="Rozmiar populacji: ")
+        self.Population_L.pack()
+        self.Population_Entry = tk.Entry(self.params_container, width = 25)
+        self.Population_Entry.pack()
+        self.Generation_L = tk.Label(self.params_container, text="Ilość generacji: ")
+        self.Generation_L.pack()
+        self.Generation_Entry = tk.Entry(self.params_container, width = 25)
+        self.Generation_Entry.pack()
+        self.Mutation_L = tk.Label(self.params_container, text="Prawdopodobieństwo mutacji: ")
+        self.Mutation_L.pack()
+        self.Mutation_Entry = tk.Entry(self.params_container, width = 25)
+        self.Mutation_Entry.pack()
+        self.Tournament_L = tk.Label(self.params_container, text="Wielkość turnieju: ")
+        self.Tournament_L.pack()
+        self.Tournament_Entry = tk.Entry(self.params_container, width=25)
+        self.Tournament_Entry.pack()
+        self.elitism_var = tk.BooleanVar(value=True)
+        self.Elitism_Checkbox = tk.Checkbutton(algo_frame, text="Elityzm", variable=self.elitism_var,
+                                               bg="#f0f0f0")
+        self.Elitism_Checkbox.pack()
         # -------------------------------------------------------------------------------------------------------------------
         # parametres for ant colony
         # -------------------------------------------------------------------------------------------------------------------
