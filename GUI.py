@@ -40,15 +40,15 @@ class Window(tk.Tk):
 
         tk.Label(new_window, text="Jedyny akceptowalny typ pliku jest '*.csv'!"
                  , font=("Arial", 11, "bold")).pack()
-        tk.Label(new_window, text="Najpierw jest koordynata x, potem y\n"
+        tk.Label(new_window, text="Najpierw jest koordynata x, potem y, a na koniec priorytet (od 1 do 10)\n"
                                   "Przykład:\n"
-                                  "x,y\n"
-                                  "10,20\n"
-                                  "50,80\n"
-                                  "30,40\n"
-                                  "90,10\n"
-                                  "75,60\n"
-                                  "30,90\n"
+                                  "x,y,priority\n"
+                                  "10,20, 1\n"
+                                  "50,80, 5\n"
+                                  "30,40, 10\n"
+                                  "90,10, 3\n"
+                                  "75,60, 7\n"
+                                  "30,90, 2\n"
                  , font=("Arial", 10)).pack(padx=5, pady=5)
 
     # ------------------------------------------------------------
@@ -104,6 +104,7 @@ class Window(tk.Tk):
         # -------------------------------------------------------------------------------------------------------------------
         #tk.Label(self.left_panel, text="Parameters: ", font=("Arial", 11, "bold"), bg="#f0f0f0").pack(pady=5)
         #parametres for genetec
+
         # -------------------------------------------------------------------------------------------------------------------
         # parametres for ant colony
         # -------------------------------------------------------------------------------------------------------------------

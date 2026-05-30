@@ -73,7 +73,51 @@ class Graphs:
         self.canvas_left.draw() # rysujemy czyste wykresy
         self.canvas_right.draw()
 
+    def draw_route_left(self, cities, route): # finalny wykres
+        self.ax_left.clear()
 
+        # rysowanie miast
+        x = [c[0] for c in cities]
+        y = [c[1] for c in cities]
+        priority = [c[2] for c in cities]
+        self.ax_left.scatter(x, y, color="Blue", s=priority, zorder=3)
 
-    def animation(self):
-        pass
+        # rysujemy wszystke linie ze skierowanymi strzałkami
+        for i in range(len(route)):
+            start_city = cities[route[i]]
+            end_city = cities[route[(i + 1) % len(route)]]
+
+            # rysowanie strzałki
+            self.ax_left.annotate('',
+                                  xy=(end_city[0], end_city[1]),
+                                  xytext=(start_city[0], start_city[1]),
+                                  arrowprops=dict(arrowstyle="->", color="Green", lw=1.5, mutation_scale=12)
+                                  )
+
+        self.ax_left.set_xlim(0, 100)
+        self.ax_left.set_ylim(0, 100)
+        self.canvas_left.draw()
+
+    def draw_route_right(self, cities, route): #wykres rysowany co iterację
+        self.ax_right.clear()
+
+        # rysowanie miast
+        x = [c[0] for c in cities]
+        y = [c[1] for c in cities]
+        priority = [c[2] for c in cities]
+        self.ax_right.scatter(x, y, color="Blue", s=priority, zorder=3)
+
+        # rysujemy wszystke linie ze skierowanymi strzałkami
+        for i in range(len(route)):
+            start_city = cities[route[i]]
+            end_city = cities[route[(i + 1) % len(route)]]
+
+            self.ax_right.annotate('',
+                                   xy=(end_city[0], end_city[1]),
+                                   xytext=(start_city[0], start_city[1]),
+                                   arrowprops=dict(arrowstyle="->", color="Red", lw=1, mutation_scale=10, alpha=0.6)
+                                   )
+
+        self.ax_right.set_xlim(0, 100)
+        self.ax_right.set_ylim(0, 100)
+        self.canvas_right.draw()
