@@ -1,7 +1,9 @@
 import tkinter as tk
-from tkinter import ttk, Button, Toplevel
+from tkinter import ttk, Button, Toplevel, messagebox
+import time
 from core.graphs import Graphs
 from core.data_loader import load_cities_from_csv
+from algorithms.genetic import Genetyczny_alg
 
 
 class Window(tk.Tk):
@@ -19,7 +21,8 @@ class Window(tk.Tk):
                 self.random_gen_entry.delete(0, tk.END) # wyczysczamy entry
                 self.random_gen_entry.insert(0, "2000")
 
-            self.graph_manager.cities_random(ile)
+            self.cities = self.graph_manager.cities_random(ile)
+
 
         except ValueError:
             from tkinter import messagebox
@@ -28,7 +31,7 @@ class Window(tk.Tk):
     def add_cities_file(self):
         cities = load_cities_from_csv() # tu są zwracane miasta z funkcji
         if cities:
-            self.graph_manager.cities_doc(cities) # przesyłamy do klasy wykresów
+            self.cities = self.graph_manager.cities_doc(cities) # przesyłamy do klasy wykresów
 
             self.random_gen_entry.delete(0, tk.END) # wyczysczamy entry
             self.random_gen_entry.insert(0, str(len(cities)))
@@ -100,15 +103,128 @@ class Window(tk.Tk):
             self.show_firefly_param()
         else:
             print('Błąd')
+#------------------------włączenie algorytmów-----------------------------------------------------------------
+    def start_algorithm(self):
+        if not hasattr(self, 'cities') or not self.cities:
+            messagebox.showwarning("Błąd", "Najpierw dodaj lub wgraj miasta!")
+            return
+        # jeżeli algorytm już działa to nie daje go drugi raz zinicjalizować
+        if self.running:
+            return
+        wybrany_algo = self.algorithm_dropdown.get()
 
+        if wybrany_algo == 'Genetyczny':
+            self.ga.dystans_miasta(self.cities)
+        elif wybrany_algo == 'Mrówkowy':
+            pass # tu dystans dla mrówkowego
+        elif wybrany_algo == 'Świetlika':
+            pass # tu dla świetlika
 
+        self.running = True
+        max_iterations = 100 # domyślnie
+        start_time = time.time()
+        #pobranie danych dla algorytmu
+        if wybrany_algo == 'Genetyczny':
+            self.ga.population_size = int(self.Population_Entry.get())
+            self.ga.generations = int(self.Generation_Entry.get())
+            self.ga.mutation = float(self.Mutation_Entry.get())
+            self.ga.tournament_size = int(self.Tournament_Entry.get())
+            self.ga.elitism = self.elitism_var.get()
 
+            max_iterations = self.ga.generations
+            populacja = self.ga.populacja()
+
+        elif wybrany_algo == 'Mrówkowy':
+            pass
+        elif wybrany_algo == 'Świetlika':
+            pass
+
+        current_best = None
+        cur_dist = 0.0
+        cur_cost = 0.0
+
+        for idx_gen in range(max_iterations):
+            # sprawdzamy czy nie zostałą nacisnięty przycisk STOP
+            if not self.running:
+                print("Algorytm został zatrzymany przez użytkownika.")
+                break
+
+            # wybranie rozwiązania według algorytmu
+            if wybrany_algo == 'Genetyczny':
+                populacja = self._krok_genetyczny(populacja)
+                current_best = min(populacja, key=self.ga.koszt)
+                cur_dist = self.ga.total_dystans(current_best)
+                cur_cost = self.ga.koszt(current_best)
+
+            elif wybrany_algo == 'Mrówkowy':
+                pass
+
+            elif wybrany_algo == 'Świetlika':
+                pass
+
+            # animowanie wykresów
+            if self.anim_var.get() and current_best is not None:
+                krok = self.anim_step_scale.get()
+                # rysujemy pierwszą, ostatnią i każdą n iterację
+                if idx_gen == 0 or idx_gen == max_iterations - 1 or (idx_gen + 1) % krok == 0:
+                    self.graph_manager.draw_route_right(self.cities, current_best)
+                    self.update()
+
+            # onowienie logów tekstowych
+            self.stats_present_label.config(
+                text=f"Iteracja: {idx_gen + 1}\nDystans: {cur_dist:.2f}\nKoszt: {cur_cost:.4f}"
+            )
+
+            # final
+        end_time = time.time()
+        duration = end_time - start_time
+
+        # rysowanie wyniku
+        if current_best is not None:
+            self.graph_manager.draw_route_left(self.cities, current_best)
+            self.stats_best_label.config(
+                text=f"Najlepszy Dystans: {cur_dist:.2f}\nNajlepszy koszt: {cur_cost:.4f}\nCzas: {duration:.4f} s"
+            )
+
+        # aplikacja zwolniona od wykonania
+        self.running = False
+
+    # obliczanie jednej iteracji/pokolenia
+    def _krok_genetyczny(self, popul):
+        new_popul = []
+        if self.ga.elitism:
+            new_popul.append(min(popul, key=self.ga.koszt))
+
+        start_range = 1 if self.ga.elitism else 0
+        for j in range(start_range, self.ga.population_size):
+            parent1 = self.ga.selekcja(popul)
+            parent2 = self.ga.selekcja(popul)
+            child = self.ga.krzyzowanie(parent1, parent2)
+            child = self.ga.mutacja(child)
+            new_popul.append(child)
+        return new_popul
+
+    def stop_algorithm(self):
+        if self.running:
+            self.running = False
+
+    def reset_algorithm(self):
+        self.cities = []
+        self.random_gen_entry.delete(0, tk.END)
+        self.stats_best_label.config(text="Najlepszy Dystans: 0.0\nNajlepszy koszt: 0.0\nCzas: 0.0000 s")
+        self.stats_present_label.config(text="Iteracja: 0 \nDystans: 0.0\nKoszt: 0.0")
+
+        # wykasowanie wykresów
+        self.graph_manager.clear_graphs()
 
     # ------------------------------------------------------------
     def __init__(self):
         super().__init__()
         self.title("Środowisko testowe TSP")
         self.geometry("1500x900")
+        self.running = False
+        self.ga = Genetyczny_alg()
+        self.cities = []
         #----------------------------------Frame division---------------------------------------------
         self.left_panel = tk.Frame(self, width=300, bg="#f0f0f0", padx=10, pady=10)
         self.left_panel.pack(side=tk.LEFT, fill=tk.Y)
@@ -156,25 +272,27 @@ class Window(tk.Tk):
         self.anim_step_scale.pack(fill=tk.X, pady=5)
 
         tk.Label(self.algo_frame, text="Wybrany Algorytm:", bg="#f0f0f0").pack(anchor="w")
+        self.params_container = tk.Frame(self.algo_frame, bg="#f0f0f0")
         self.algorithm_dropdown = ttk.Combobox(self.algo_frame, values=['Genetyczny', 'Mrówkowy', 'Świetlika'],
                                                state="readonly")
         self.algorithm_dropdown.bind("<<ComboboxSelected>>", self.parameters_chooser)
         self.algorithm_dropdown.pack(pady=5, fill=tk.X)
         self.algorithm_dropdown.current(0)
+        self.show_gen_param()
 
-        self.params_container = tk.Frame(self.algo_frame, bg="#f0f0f0")
+
         self.params_container.pack(fill=tk.X, pady=5)
 
         ctrl_frame = tk.Frame(self.left_panel, bg="#f0f0f0")
         ctrl_frame.pack(fill=tk.X, padx=10, pady=20, side=tk.BOTTOM)  # Przyciski poniżej
 
-        self.start_btn = tk.Button(ctrl_frame, text="START", bg="#4CAF50", fg="white", font=("Arial", 11, "bold"))
+        self.start_btn = tk.Button(ctrl_frame, text="START", bg="#4CAF50", fg="white", font=("Arial", 11, "bold"), command=self.start_algorithm)
         self.start_btn.pack(fill=tk.X, pady=2)
 
-        self.stop_btn = tk.Button(ctrl_frame, text="STOP", bg="#F44336", fg="white", font=("Arial", 11, "bold"))
+        self.stop_btn = tk.Button(ctrl_frame, text="STOP", bg="#F44336", fg="white", font=("Arial", 11, "bold"), command=self.stop_algorithm)
         self.stop_btn.pack(fill=tk.X, pady=2)
 
-        self.reset_btn = tk.Button(ctrl_frame, text="RESET", bg="#2196F3", fg="white", font=("Arial", 11, "bold"))
+        self.reset_btn = tk.Button(ctrl_frame, text="RESET", bg="#2196F3", fg="white", font=("Arial", 11, "bold"), command=self.reset_algorithm)
         self.reset_btn.pack(fill=tk.X, pady=2)
 
         # Botoom panel

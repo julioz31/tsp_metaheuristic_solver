@@ -61,6 +61,8 @@ class Graphs:
         self.canvas_left.draw()  # rysujemy miasta
         self.canvas_right.draw()
 
+        return list(zip(x, y, priority))
+
     def clear_graphs(self):
         self.ax_left.clear() # wyczyszczamy wykresy
         self.ax_right.clear()
