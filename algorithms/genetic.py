@@ -107,30 +107,17 @@ class Genetyczny_alg:
 
         return route
 
+    def pokolenie(self, popul):
+        """obliczanie jednej iteracji / pokolenia"""
+        new_popul = []
+        if self.elitism:
+            new_popul.append(min(popul, key=self.koszt))
 
-
-    def pokolenie(self):
-        popul = self.populacja()
-        for i in range(self.generations):
-            new_popul = []
-
-            if self.elitism:
-                best = min(popul, key=self.koszt)
-                new_popul.append(best)
-            start_range = 1 if self.elitism else 0
-
-            for j in range(start_range, self.population_size):
-                parent1 = self.selekcja(popul)
-                parent2 = self.selekcja(popul)
-
-                child = self.krzyzowanie(parent1, parent2)
-                child = self.mutacja(child)
-
-                new_popul.append(child)
-
-            popul = new_popul
-
-
-
-        final_route = min(popul, key=self.koszt)
-        return final_route
+        start_range = 1 if self.elitism else 0
+        for j in range(start_range, self.population_size):
+            parent1 = self.selekcja(popul)
+            parent2 = self.selekcja(popul)
+            child = self.krzyzowanie(parent1, parent2)
+            child = self.mutacja(child)
+            new_popul.append(child)
+        return new_popul

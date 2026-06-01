@@ -151,7 +151,7 @@ class Window(tk.Tk):
 
             # wybranie rozwiązania według algorytmu
             if wybrany_algo == 'Genetyczny':
-                populacja = self._krok_genetyczny(populacja)
+                populacja = self.ga.pokolenie(populacja)
                 current_best = min(populacja, key=self.ga.koszt)
                 cur_dist = self.ga.total_dystans(current_best)
                 cur_cost = self.ga.koszt(current_best)
@@ -188,21 +188,6 @@ class Window(tk.Tk):
 
         # aplikacja zwolniona od wykonania
         self.running = False
-
-    # obliczanie jednej iteracji/pokolenia
-    def _krok_genetyczny(self, popul):
-        new_popul = []
-        if self.ga.elitism:
-            new_popul.append(min(popul, key=self.ga.koszt))
-
-        start_range = 1 if self.ga.elitism else 0
-        for j in range(start_range, self.ga.population_size):
-            parent1 = self.ga.selekcja(popul)
-            parent2 = self.ga.selekcja(popul)
-            child = self.ga.krzyzowanie(parent1, parent2)
-            child = self.ga.mutacja(child)
-            new_popul.append(child)
-        return new_popul
 
     def stop_algorithm(self):
         if self.running:
