@@ -51,15 +51,44 @@ class Window(tk.Tk):
                                   "30,90, 2\n"
                  , font=("Arial", 10)).pack(padx=5, pady=5)
 
+    # parametres for genetic
     def show_gen_param(self):
-        pass
+        for widget in self.params_container.winfo_children():
+            widget.destroy()
 
+        self.Population_L = tk.Label(self.params_container, text="Rozmiar populacji: ")
+        self.Population_L.pack()
+        self.Population_Entry = tk.Entry(self.params_container, width=25)
+        self.Population_Entry.pack()
+        self.Generation_L = tk.Label(self.params_container, text="Ilość generacji: ")
+        self.Generation_L.pack()
+        self.Generation_Entry = tk.Entry(self.params_container, width=25)
+        self.Generation_Entry.pack()
+        self.Mutation_L = tk.Label(self.params_container, text="Prawdopodobieństwo mutacji: ")
+        self.Mutation_L.pack()
+        self.Mutation_Entry = tk.Entry(self.params_container, width=25)
+        self.Mutation_Entry.pack()
+        self.Tournament_L = tk.Label(self.params_container, text="Wielkość turnieju: ")
+        self.Tournament_L.pack()
+        self.Tournament_Entry = tk.Entry(self.params_container, width=25)
+        self.Tournament_Entry.pack()
+        self.elitism_var = tk.BooleanVar(value=True)
+        self.Elitism_Checkbox = tk.Checkbutton(self.params_container, text="Elityzm", variable=self.elitism_var,
+                                               bg="#f0f0f0")
+        self.Elitism_Checkbox.pack()
+
+    # parametres for ant colony
     def show_ant_param(self):
-        pass
+        for widget in self.params_container.winfo_children():
+            widget.destroy()
+        tk.Label(self.params_container, text="(Tu się pojawią parametry)", fg="gray", bg="#f0f0f0").pack()
 
+    # parametres for firefly
     def show_firefly_param(self):
-        pass
-
+        for widget in self.params_container.winfo_children():
+            widget.destroy()
+        tk.Label(self.params_container, text="(Tu się pojawią parametry)", fg="gray", bg="#f0f0f0").pack()
+    #metoda do przełączania parametrów
     def parameters_chooser(self, event):
         chosen = self.algorithm_dropdown.get()
 
@@ -112,59 +141,32 @@ class Window(tk.Tk):
         self.manual_button = tk.Button(gen_frame, text="Przeczytać manual", command=self.manual, font=("Arial", 8, "italic"))
         self.manual_button.pack(anchor="e")
         # -------------------------------------------------------------------------------------------------------------------
-        algo_frame = tk.LabelFrame(self.left_panel, text=" Ustawienia Algoritmów ", font=("Arial", 10, "bold"),
+        self.algo_frame = tk.LabelFrame(self.left_panel, text=" Ustawienia Algoritmów ", font=("Arial", 10, "bold"),
                                    bg="#f0f0f0", padx=10, pady=10)
-        algo_frame.pack(fill=tk.X, padx=10, pady=5)
+        self.algo_frame.pack(fill=tk.X, padx=10, pady=5)
 
         self.anim_var = tk.BooleanVar(value=True)
-        self.anim_checkbox = tk.Checkbutton(algo_frame, text="Wizualizacja na żywo", variable=self.anim_var,
+        self.anim_checkbox = tk.Checkbutton(self.algo_frame, text="Wizualizacja na żywo", variable=self.anim_var,
                                             bg="#f0f0f0")
         self.anim_checkbox.pack(pady=(10, 0), anchor="w")
 
-        tk.Label(algo_frame, text="Krok odświeżania (iteracje):", bg="#f0f0f0").pack(anchor="w", pady=(5, 0))
-        self.anim_step_scale = tk.Scale(algo_frame, from_=1, to=50, orient=tk.HORIZONTAL, bg="#f0f0f0", resolution=1)
+        tk.Label(self.algo_frame, text="Krok odświeżania (iteracje):", bg="#f0f0f0").pack(anchor="w", pady=(5, 0))
+        self.anim_step_scale = tk.Scale(self.algo_frame, from_=1, to=50, orient=tk.HORIZONTAL, bg="#f0f0f0", resolution=1)
         self.anim_step_scale.set(10)  # domyślnie 10
         self.anim_step_scale.pack(fill=tk.X, pady=5)
 
-        tk.Label(algo_frame, text="Wybrany Algorytm:", bg="#f0f0f0").pack(anchor="w")
-        self.algorithm_dropdown = ttk.Combobox(algo_frame, values=['Genetyczny', 'Mrówkowy', 'Świetlika'],
+        tk.Label(self.algo_frame, text="Wybrany Algorytm:", bg="#f0f0f0").pack(anchor="w")
+        self.algorithm_dropdown = ttk.Combobox(self.algo_frame, values=['Genetyczny', 'Mrówkowy', 'Świetlika'],
                                                state="readonly")
+        self.algorithm_dropdown.bind("<<ComboboxSelected>>", self.parameters_chooser)
         self.algorithm_dropdown.pack(pady=5, fill=tk.X)
         self.algorithm_dropdown.current(0)
 
-        self.params_container = tk.Frame(algo_frame, bg="#f0f0f0")
+        self.params_container = tk.Frame(self.algo_frame, bg="#f0f0f0")
         self.params_container.pack(fill=tk.X, pady=5)
-        #tk.Label(self.params_container, text="(Tu się pojawią parametry)", fg="gray", bg="#f0f0f0").pack()
-        # -------------------------------------------------------------------------------------------------------------------
-        #--------------------------------------------------------------------------------------------------------------------
-        #parametres for genetic
-        self.Population_L = tk.Label(self.params_container, text="Rozmiar populacji: ")
-        self.Population_L.pack()
-        self.Population_Entry = tk.Entry(self.params_container, width = 25)
-        self.Population_Entry.pack()
-        self.Generation_L = tk.Label(self.params_container, text="Ilość generacji: ")
-        self.Generation_L.pack()
-        self.Generation_Entry = tk.Entry(self.params_container, width = 25)
-        self.Generation_Entry.pack()
-        self.Mutation_L = tk.Label(self.params_container, text="Prawdopodobieństwo mutacji: ")
-        self.Mutation_L.pack()
-        self.Mutation_Entry = tk.Entry(self.params_container, width = 25)
-        self.Mutation_Entry.pack()
-        self.Tournament_L = tk.Label(self.params_container, text="Wielkość turnieju: ")
-        self.Tournament_L.pack()
-        self.Tournament_Entry = tk.Entry(self.params_container, width=25)
-        self.Tournament_Entry.pack()
-        self.elitism_var = tk.BooleanVar(value=True)
-        self.Elitism_Checkbox = tk.Checkbutton(algo_frame, text="Elityzm", variable=self.elitism_var,
-                                               bg="#f0f0f0")
-        self.Elitism_Checkbox.pack()
-        # -------------------------------------------------------------------------------------------------------------------
-        # parametres for ant colony
-        # -------------------------------------------------------------------------------------------------------------------
-        # parametres for firefly
-        # -------------------------------------------------------------------------------------------------------------------
+
         ctrl_frame = tk.Frame(self.left_panel, bg="#f0f0f0")
-        ctrl_frame.pack(fill=tk.X, padx=10, pady=20, side=tk.BOTTOM)  # Кнопки внизу
+        ctrl_frame.pack(fill=tk.X, padx=10, pady=20, side=tk.BOTTOM)  # Przyciski poniżej
 
         self.start_btn = tk.Button(ctrl_frame, text="START", bg="#4CAF50", fg="white", font=("Arial", 11, "bold"))
         self.start_btn.pack(fill=tk.X, pady=2)
