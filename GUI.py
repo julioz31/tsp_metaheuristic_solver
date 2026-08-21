@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, Button, Toplevel, messagebox
 import time
 from core.graphs import Graphs
-from core.data_loader import load_cities_from_csv
+from core.data_loader import load_cities_from_file
 from algorithms.genetic import Genetyczny_alg
 
 
@@ -21,6 +21,7 @@ class Window(tk.Tk):
                 self.random_gen_entry.delete(0, tk.END) # wyczysczamy entry
                 self.random_gen_entry.insert(0, "2000")
 
+
             self.cities = self.graph_manager.cities_random(ile)
 
 
@@ -29,9 +30,9 @@ class Window(tk.Tk):
             messagebox.showwarning("Błąd. Wpisz liczbę całkowitą!")
 
     def add_cities_file(self):
-        cities = load_cities_from_csv() # tu są zwracane miasta z funkcji
+        cities = load_cities_from_file() # tu są zwracane miasta z funkcji
         if cities:
-            self.cities = self.graph_manager.cities_doc(cities) # przesyłamy do klasy wykresów
+            self.cities = self.graph_manager.cities_file(cities) # przesyłamy do klasy wykresów
 
             self.random_gen_entry.delete(0, tk.END) # wyczysczamy entry
             self.random_gen_entry.insert(0, str(len(cities)))
@@ -39,12 +40,14 @@ class Window(tk.Tk):
     def manual(self):
         new_window = Toplevel(self)
         new_window.title("Manual")
-        new_window.geometry("300x200")
+        new_window.geometry("450x300")
 
-        tk.Label(new_window, text="Jedyny akceptowalny typ pliku jest '*.csv'!"
+        tk.Label(new_window, text="Jedyne akceptowalne typy plików są"
                  , font=("Arial", 11, "bold")).pack()
-        tk.Label(new_window, text="Najpierw jest koordynata x, potem y, a na koniec priorytet (od 1 do 10)\n"
-                                  "Przykład:\n"
+        tk.Label(new_window, text="'*.csv' oraz '*.gz'"
+                 , font=("Arial", 13, "bold")).pack()
+        tk.Label(new_window, text="Dla pliku CSV:\nNajpierw jest koordynata x, potem y, a na koniec priorytet (od 1 do 10)\n"
+                                  "Przykład (w jednej komórce):\n"
                                   "x,y,priority\n"
                                   "10,20, 1\n"
                                   "50,80, 5\n"
@@ -53,6 +56,10 @@ class Window(tk.Tk):
                                   "75,60, 7\n"
                                   "30,90, 2\n"
                  , font=("Arial", 10)).pack(padx=5, pady=5)
+        tk.Label(new_window, text="Pliki od TSP LIB powinne mieścić się w archiwum: *.gz"
+                                  "\nNa przykład: burma14.tsp.gz,"
+                                  "\ngdzie mieści się plik burma14.tsp"
+                 , font=("Arial", 10)).pack()
 
     # parametres for genetic
     def show_gen_param(self):
@@ -234,12 +241,12 @@ class Window(tk.Tk):
         tk.Label(gen_frame, text="Randomna generacja (max 2000):", bg="#f0f0f0").pack(anchor="w")
         self.random_gen_entry = tk.Entry(gen_frame, width=15)
         self.random_gen_entry.pack(pady=5, fill=tk.X)
-        tk.Button(gen_frame, text="Dodać miasta", command=self.add_cities).pack(fill=tk.X)
+        tk.Button(gen_frame, text="Dodaj miasta", command=self.add_cities).pack(fill=tk.X)
 
         tk.Label(gen_frame, text="Operacje z plikami:", bg="#f0f0f0").pack(anchor="w", pady=(10, 0))
-        self.file_gen_button = tk.Button(gen_frame, text="Nagrać plik (.csv)", command=self.add_cities_file)
+        self.file_gen_button = tk.Button(gen_frame, text="Nagraj plik (.csv, .gz)", command=self.add_cities_file)
         self.file_gen_button.pack(fill=tk.X, pady=2)
-        self.manual_button = tk.Button(gen_frame, text="Przeczytać manual", command=self.manual, font=("Arial", 8, "italic"))
+        self.manual_button = tk.Button(gen_frame, text="Przeczytaj manual", command=self.manual, font=("Arial", 8, "italic"))
         self.manual_button.pack(anchor="e")
         # -------------------------------------------------------------------------------------------------------------------
         self.algo_frame = tk.LabelFrame(self.left_panel, text=" Ustawienia Algoritmów ", font=("Arial", 10, "bold"),

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
-from core.data_loader import load_cities_from_csv
+from core.data_loader import load_cities_from_file
 
 class Graphs:
     def __init__(self, frame_left, frame_right):
@@ -11,13 +11,9 @@ class Graphs:
 
         self.ax_left = self.fig_left.add_subplot(111)
         self.ax_right = self.fig_right.add_subplot(111)
-        self.ax_left.set_xlim(0, 100)
-        self.ax_left.set_ylim(0, 100)
-        self.ax_right.set_xlim(0, 100)
-        self.ax_right.set_ylim(0, 100)
-
-        self.canvas_left = FigureCanvasTkAgg(self.fig_left, master = frame_left)
-        self.canvas_left.get_tk_widget().pack(fill = "both", expand=True)
+        self.x, self.y, self.priority = [], [], []
+        self.canvas_left = FigureCanvasTkAgg(self.fig_left, master=frame_left)
+        self.canvas_left.get_tk_widget().pack(fill="both", expand=True)
         self.canvas_right = FigureCanvasTkAgg(self.fig_right, master=frame_right)
         self.canvas_right.get_tk_widget().pack(fill="both", expand=True)
 
@@ -25,54 +21,54 @@ class Graphs:
         self.ax_left.clear() # wyczyszczamy wykresy
         self.ax_right.clear()
 
-        x = np.random.randint(0, 101, size = ile) #generujemy miasta
-        y = np.random.randint(0, 101, size = ile)
-        priority = np.random.randint(1, 10, size = ile)
+        self.x = np.random.randint(0, 101, size = ile) #generujemy miasta
+        self.y = np.random.randint(0, 101, size = ile)
+        self.priority = np.random.randint(1, 10, size = ile)
 
-        self.ax_left.scatter(x, y, color="Blue", s=priority)
-        self.ax_right.scatter(x, y, color="Blue", s=priority)
+        self.ax_left.scatter(self.x, self.y, color="Blue", s=self.priority)
+        self.ax_right.scatter(self.x, self.y, color="Blue", s=self.priority)
 
-        self.ax_left.set_xlim(0, 100)
-        self.ax_left.set_ylim(0, 100)
-        self.ax_right.set_xlim(0, 100)
-        self.ax_right.set_ylim(0, 100)
+        self.ax_left.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
+        self.ax_left.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
+        self.ax_right.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
+        self.ax_right.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
 
         self.canvas_left.draw() # rysujemy miasta
         self.canvas_right.draw()
 
-        return list(zip(x, y, priority)) # zwracamy listę miast dla algorytmów
+        return list(zip(self.x, self.y, self.priority)) # zwracamy listę miast dla algorytmów
 
-    def cities_doc(self, list_of_cities): #metoda do tworzenia miast z pliku
+    def cities_file(self, list_of_cities): #metoda do tworzenia miast z pliku
+        self.x, self.y, self.priority = zip(*list_of_cities)  # rozpakujemy naszą listę koordynat
+
         self.ax_left.clear()  # wyczyszczamy wykresy
         self.ax_right.clear()
 
-        x, y, priority = zip(*list_of_cities) # rozpakujemy naszą listę koordynat
+        sizes = [20 + (val * 40) for val in self.priority]  # rozmiar miasta zależy od prioritetu
 
-        sizes = [20 + (val * 40) for val in priority] #rozmiar miasta zależy od prioritetu
+        self.ax_left.scatter(self.x, self.y, color="Blue", s=sizes)
+        self.ax_right.scatter(self.x, self.y, color="Blue", s=sizes)
 
-        self.ax_left.scatter(x, y, color="Blue", s=sizes)
-        self.ax_right.scatter(x, y, color="Blue", s=sizes)
-
-        self.ax_left.set_xlim(0, 100)
-        self.ax_left.set_ylim(0, 100)
-        self.ax_right.set_xlim(0, 100)
-        self.ax_right.set_ylim(0, 100)
+        self.ax_left.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
+        self.ax_left.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
+        self.ax_right.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
+        self.ax_right.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
 
         self.canvas_left.draw()  # rysujemy miasta
         self.canvas_right.draw()
 
-        return list(zip(x, y, priority))
+        return list(zip(self.x, self.y, self.priority))
 
     def clear_graphs(self):
         self.ax_left.clear() # wyczyszczamy wykresy
         self.ax_right.clear()
 
-        self.ax_left.set_xlim(0, 100)
-        self.ax_left.set_ylim(0, 100)
-        self.ax_right.set_xlim(0, 100)
-        self.ax_right.set_ylim(0, 100)
+        self.ax_left.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
+        self.ax_left.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
+        self.ax_right.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
+        self.ax_right.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
 
-        self.canvas_left.draw() # rysujemy czyste wykresy
+        self.canvas_left.draw()  # rysujemy czyste wykresy
         self.canvas_right.draw()
 
     def draw_route_left(self, cities, route): # finalny wykres
@@ -81,8 +77,9 @@ class Graphs:
         # rysowanie miast
         x = [c[0] for c in cities]
         y = [c[1] for c in cities]
-        priority = [c[2] for c in cities]
-        self.ax_left.scatter(x, y, color="Blue", s=priority, zorder=3)
+        sizes = [20 + (val * 40) for val in self.priority]
+        #self.priority = [c[2] for c in cities]
+        self.ax_left.scatter(x, y, color="Blue", s=sizes, zorder=3)
 
         # rysujemy wszystke linie ze skierowanymi strzałkami
         for i in range(len(route)):
@@ -96,8 +93,8 @@ class Graphs:
                                   arrowprops=dict(arrowstyle="->", color="Green", lw=1.5, mutation_scale=12)
                                   )
 
-        self.ax_left.set_xlim(0, 100)
-        self.ax_left.set_ylim(0, 100)
+        self.ax_left.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
+        self.ax_left.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
         self.canvas_left.draw()
 
     def draw_route_right(self, cities, route): #wykres rysowany co iterację
@@ -106,8 +103,9 @@ class Graphs:
         # rysowanie miast
         x = [c[0] for c in cities]
         y = [c[1] for c in cities]
-        priority = [c[2] for c in cities]
-        self.ax_right.scatter(x, y, color="Blue", s=priority, zorder=3)
+        sizes = [20 + (val * 40) for val in self.priority]
+        #priority = [c[2] for c in cities]
+        self.ax_right.scatter(x, y, color="Blue", s=sizes, zorder=3)
 
         # rysujemy wszystke linie ze skierowanymi strzałkami
         for i in range(len(route)):
@@ -120,6 +118,6 @@ class Graphs:
                                    arrowprops=dict(arrowstyle="->", color="Red", lw=1, mutation_scale=10, alpha=0.6)
                                    )
 
-        self.ax_right.set_xlim(0, 100)
-        self.ax_right.set_ylim(0, 100)
+        self.ax_right.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
+        self.ax_right.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
         self.canvas_right.draw()
