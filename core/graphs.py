@@ -28,10 +28,10 @@ class Graphs:
         self.ax_left.scatter(self.x, self.y, color="Blue", s=self.priority)
         self.ax_right.scatter(self.x, self.y, color="Blue", s=self.priority)
 
-        self.ax_left.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
-        self.ax_left.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
-        self.ax_right.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
-        self.ax_right.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
+        self.ax_left.set_xlim(min(self.x)-0.5, max(self.x)+0.5)
+        self.ax_left.set_ylim(min(self.y)-0.5, max(self.y)+0.5)
+        self.ax_right.set_xlim(min(self.x)-0.5, max(self.x)+0.5)
+        self.ax_right.set_ylim(min(self.y)-0.5, max(self.y)+0.5)
 
         self.canvas_left.draw() # rysujemy miasta
         self.canvas_right.draw()
@@ -49,10 +49,10 @@ class Graphs:
         self.ax_left.scatter(self.x, self.y, color="Blue", s=sizes)
         self.ax_right.scatter(self.x, self.y, color="Blue", s=sizes)
 
-        self.ax_left.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
-        self.ax_left.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
-        self.ax_right.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
-        self.ax_right.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
+        self.ax_left.set_xlim(min(self.x)-0.5, max(self.x)+0.5)
+        self.ax_left.set_ylim(min(self.y)-0.5, max(self.y)+0.5)
+        self.ax_right.set_xlim(min(self.x)-0.5, max(self.x)+0.5)
+        self.ax_right.set_ylim(min(self.y)-0.5, max(self.y)+0.5)
 
         self.canvas_left.draw()  # rysujemy miasta
         self.canvas_right.draw()
@@ -63,10 +63,10 @@ class Graphs:
         self.ax_left.clear() # wyczyszczamy wykresy
         self.ax_right.clear()
 
-        self.ax_left.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
-        self.ax_left.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
-        self.ax_right.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
-        self.ax_right.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
+        self.ax_left.set_xlim(min(self.x)-0.5, max(self.x)+0.5)
+        self.ax_left.set_ylim(min(self.y)-0.5, max(self.y)+0.5)
+        self.ax_right.set_xlim(min(self.x)-0.5, max(self.x)+0.5)
+        self.ax_right.set_ylim(min(self.y)-0.5, max(self.y)+0.5)
 
         self.canvas_left.draw()  # rysujemy czyste wykresy
         self.canvas_right.draw()
@@ -93,8 +93,8 @@ class Graphs:
                                   arrowprops=dict(arrowstyle="->", color="Green", lw=1.5, mutation_scale=12)
                                   )
 
-        self.ax_left.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
-        self.ax_left.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
+        self.ax_left.set_xlim(min(self.x)-0.5, max(self.x)+0.5)
+        self.ax_left.set_ylim(min(self.y)-0.5, max(self.y)+0.5)
         self.canvas_left.draw()
 
     def draw_route_right(self, cities, route): #wykres rysowany co iterację
@@ -118,6 +118,6 @@ class Graphs:
                                    arrowprops=dict(arrowstyle="->", color="Red", lw=1, mutation_scale=10, alpha=0.6)
                                    )
 
-        self.ax_right.set_xlim(min(self.x)-0.05, max(self.x)+0.05)
-        self.ax_right.set_ylim(min(self.y)-0.05, max(self.y)+0.05)
+        self.ax_right.set_xlim(min(self.x)-0.5, max(self.x)+0.5)
+        self.ax_right.set_ylim(min(self.y)-0.5, max(self.y)+0.5)
         self.canvas_right.draw()

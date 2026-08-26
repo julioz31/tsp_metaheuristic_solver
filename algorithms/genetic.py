@@ -1,4 +1,4 @@
-from math import dist
+import math
 from itertools import combinations
 import random as rd
 from random import random
@@ -22,17 +22,13 @@ class Genetyczny_alg:
         for i in range(len(cities)):
             for j in range(len(cities)):
                 if i != j:
-                    p1 = (cities[i][0], cities[i][1])
-                    p2 = (cities[j][0], cities[j][1])
-
-                    base_dist = dist(p1, p2)
+                    x1 = cities[i][0]
+                    x2 = cities[j][0]
                     y1 = cities[i][1]
                     y2 = cities[j][1]
 
-                    if y2 > y1:
-                        self.distances[(i, j)] = base_dist * 1.3
-                    else:
-                        self.distances[(i, j)] = base_dist
+                    base_dist = math.sqrt((x1 - x2)**2 + (y1-y2)**2)  # dist(p1, p2)
+                    self.distances[(i,j)] = base_dist
 
     def total_dystans(self, route):
         """kalkulacja całej śzieżki"""
@@ -75,35 +71,37 @@ class Genetyczny_alg:
         return winner
 
     def krzyzowanie(self, parent1, parent2):
+        """OX"""
         size = len(parent1)
         a,b = sorted(rd.sample(range(size), 2)) #wybieramy dwa dowolne punkty segmentu
 
         child = [None] * size #tworzymy dziecka
         child[a:b] = parent1[a:b] #kopiujemy część od pierwszego ojca
-        remaining = [item for item in parent2 if item not in child]
+
+        parent2_ordered = parent2[b:] + parent2[:b]
+        remaining = [item for item in parent2_ordered if item not in child]
 
         idx = 0
         for i in range(size):
-            if child[i] is None:
-                child[i] = remaining[idx]
+            pos = (b + i) % size
+            if child[pos] is None:
+                child[pos] = remaining[idx]
                 idx += 1
 
         return child
 
     def mutacja(self, route):
-        """mutowanie trasy: zmiania wybranych mist miejscami"""
+        """mutowanie trasy: zmiania wybranych miast miejscami
+        inversion mutation"""
         if rd.random() < self.mutation:
-            a = rd.randint(0, len(route)-1)
-            b = rd.randint(0, len(route)-1)
+            a,b = sorted(rd.sample(range(len(route)), 2))
 
-            if a == b:
+            if a == b or (b - a) == 1:
                 return route
 
-            city1 = route[a]
-            city2 = route[b]
-
-            route[a] = city2
-            route[b] = city1
+            mutation = route[a:b]
+            mutation = mutation[::-1]
+            route[a:b] = mutation
 
         return route
 
