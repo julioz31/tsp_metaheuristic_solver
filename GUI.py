@@ -61,37 +61,79 @@ class Window(tk.Tk):
                                   "\ngdzie mieści się plik burma14.tsp"
                  , font=("Arial", 10)).pack()
 
+    def iter_options(self):
+        chosen = self.algorithm_dropdown.get()
+
+        if chosen == 'Genetyczny':
+            if self.iterate_var.get():
+                self.Generation_L.grid_forget()
+                self.Generation_Entry.grid_forget()
+            else:
+                self.Generation_L.grid(column=0, row=1)
+                self.Generation_Entry.grid(column=1, row=1)
+        elif chosen == 'Mrówkowy':
+            if self.iterate_var.get():
+                self.Iter_L.grid_forget()
+                self.Iter_Entry.grid_forget()
+            else:
+                self.Iter_L.grid(column=0, row=1)
+                self.Iter_Entry.grid(column=1, row=1)
+
+
     # parametres for genetic
     def show_gen_param(self):
         for widget in self.params_container.winfo_children():
             widget.destroy()
 
         self.Population_L = tk.Label(self.params_container, text="Rozmiar populacji: ")
-        self.Population_L.pack()
+        self.Population_L.grid(column=0, row=0)
         self.Population_Entry = tk.Entry(self.params_container, width=25)
-        self.Population_Entry.pack()
+        self.Population_Entry.grid(column=1, row=0)
         self.Generation_L = tk.Label(self.params_container, text="Ilość generacji: ")
-        self.Generation_L.pack()
         self.Generation_Entry = tk.Entry(self.params_container, width=25)
-        self.Generation_Entry.pack()
         self.Mutation_L = tk.Label(self.params_container, text="Prawdopodobieństwo mutacji: ")
-        self.Mutation_L.pack()
+        self.Mutation_L.grid(column=0, row=2)
         self.Mutation_Entry = tk.Entry(self.params_container, width=25)
-        self.Mutation_Entry.pack()
+        self.Mutation_Entry.grid(column=1, row=2)
         self.Tournament_L = tk.Label(self.params_container, text="Wielkość turnieju: ")
-        self.Tournament_L.pack()
+        self.Tournament_L.grid(column=0, row=3)
         self.Tournament_Entry = tk.Entry(self.params_container, width=25)
-        self.Tournament_Entry.pack()
+        self.Tournament_Entry.grid(column=1, row=3)
         self.elitism_var = tk.BooleanVar(value=True)
-        self.Elitism_Checkbox = tk.Checkbutton(self.params_container, text="Elityzm", variable=self.elitism_var,
-                                               bg="#f0f0f0")
-        self.Elitism_Checkbox.pack()
+        self.Elitism_Checkbox = tk.Checkbutton(self.params_container, text="Elityzm", variable=self.elitism_var, bg="#f0f0f0")
+        self.Elitism_Checkbox.grid(column=0, row=4)
 
     # parametres for ant colony
     def show_ant_param(self):
         for widget in self.params_container.winfo_children():
             widget.destroy()
-        tk.Label(self.params_container, text="(Tu się pojawią parametry)", fg="gray", bg="#f0f0f0").pack()
+
+        self.Ants_L = tk.Label(self.params_container, text="Liczba mrówek: ")
+        self.Ants_L.grid(column=0, row=0)
+        self.Ants_Entry = tk.Entry(self.params_container, width=25)
+        self.Ants_Entry.grid(column=1, row=0)
+        self.Iter_L = tk.Label(self.params_container, text="Liczba iteracji: ")
+        #self.Iter_L.grid(column=0, row=1)
+        self.Iter_Entry = tk.Entry(self.params_container, width=25)
+        #self.Iter_Entry.grid(column=1, row=1)
+        self.Pheromone_L = tk.Label(self.params_container, text="Ewaporacja feromonu: ")
+        self.Pheromone_L.grid(column=0, row=2)
+        self.Pheromone_Entry = tk.Entry(self.params_container, width=25)
+        self.Pheromone_Entry.grid(column=1, row=2)
+        self.Alpha_L = tk.Label(self.params_container, text="α: ")
+        self.Alpha_L.grid(column=0, row=3)
+        self.Alpha_Entry = tk.Entry(self.params_container, width=25)
+        self.Alpha_Entry.grid(column=1, row=3)
+        self.Beta_L = tk.Label(self.params_container, text="β: ")
+        self.Beta_L.grid(column=0, row=4)
+        self.Beta_Entry = tk.Entry(self.params_container, width=25)
+        self.Beta_Entry.grid(column=1, row=4)
+        self.Q_L = tk.Label(self.params_container, text="Q: ")
+        self.Q_L.grid(column=0, row=5)
+        self.Q_Entry = tk.Entry(self.params_container, width=25)
+        self.Q_Entry.grid(column=1, row=5)
+
+        #tk.Label(self.params_container, text="(Tu się pojawią parametry)", fg="gray", bg="#f0f0f0").pack()
 
     # parametres for firefly
     def show_firefly_param(self):
@@ -101,6 +143,7 @@ class Window(tk.Tk):
     #metoda do przełączania parametrów
     def parameters_chooser(self, event):
         chosen = self.algorithm_dropdown.get()
+        self.iterate_var.set(True)
 
         if chosen == 'Genetyczny':
             self.show_gen_param()
@@ -257,6 +300,11 @@ class Window(tk.Tk):
         self.anim_checkbox = tk.Checkbutton(self.algo_frame, text="Wizualizacja na żywo", variable=self.anim_var,
                                             bg="#f0f0f0")
         self.anim_checkbox.pack(pady=(10, 0), anchor="w")
+
+        self.iterate_var = tk.BooleanVar(value=True)
+        self.iterate_checkbox = tk.Checkbutton(self.algo_frame, text="Obliczanie do zbieżności", variable=self.iterate_var, command= self.iter_options,
+                                            bg="#f0f0f0")
+        self.iterate_checkbox.pack(pady=(10, 0), anchor="w")
 
         tk.Label(self.algo_frame, text="Krok odświeżania (iteracje):", bg="#f0f0f0").pack(anchor="w", pady=(5, 0))
         self.anim_step_scale = tk.Scale(self.algo_frame, from_=1, to=50, orient=tk.HORIZONTAL, bg="#f0f0f0", resolution=1)
