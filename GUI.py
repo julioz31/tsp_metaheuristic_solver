@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, Button, Toplevel, messagebox
 import time
+from algorithms.aco import Mrowkowy_alg
 from core.graphs import Graphs
 from core.data_loader import load_cities_from_file
 from algorithms.genetic import Genetyczny_alg
@@ -113,9 +114,7 @@ class Window(tk.Tk):
         self.Ants_Entry = tk.Entry(self.params_container, width=25)
         self.Ants_Entry.grid(column=1, row=0)
         self.Iter_L = tk.Label(self.params_container, text="Liczba iteracji: ")
-        #self.Iter_L.grid(column=0, row=1)
         self.Iter_Entry = tk.Entry(self.params_container, width=25)
-        #self.Iter_Entry.grid(column=1, row=1)
         self.Pheromone_L = tk.Label(self.params_container, text="Ewaporacja feromonu: ")
         self.Pheromone_L.grid(column=0, row=2)
         self.Pheromone_Entry = tk.Entry(self.params_container, width=25)
@@ -132,14 +131,15 @@ class Window(tk.Tk):
         self.Q_L.grid(column=0, row=5)
         self.Q_Entry = tk.Entry(self.params_container, width=25)
         self.Q_Entry.grid(column=1, row=5)
-
-        #tk.Label(self.params_container, text="(Tu się pojawią parametry)", fg="gray", bg="#f0f0f0").pack()
+        self.Elitism_Checkbox = tk.Checkbutton(self.params_container, text="Elityzm", variable=self.elitism_var, bg="#f0f0f0")
+        self.Elitism_Checkbox.grid(column=0, row=6)
 
     # parametres for firefly
     def show_firefly_param(self):
         for widget in self.params_container.winfo_children():
             widget.destroy()
         tk.Label(self.params_container, text="(Tu się pojawią parametry)", fg="gray", bg="#f0f0f0").pack()
+
     #metoda do przełączania parametrów
     def parameters_chooser(self, event):
         chosen = self.algorithm_dropdown.get()
@@ -171,17 +171,21 @@ class Window(tk.Tk):
             pass # tu dla świetlika
 
         self.running = True
+
         max_iterations = 100 # domyślnie
         start_time = time.time()
         #pobranie danych dla algorytmu
         if wybrany_algo == 'Genetyczny':
             self.ga.population_size = int(self.Population_Entry.get())
-            self.ga.generations = int(self.Generation_Entry.get())
             self.ga.mutation = float(self.Mutation_Entry.get())
             self.ga.tournament_size = int(self.Tournament_Entry.get())
             self.ga.elitism = self.elitism_var.get()
+            if self.iterate_var.get(): # zabezpieczamy pred pracą po kołu bez ustalonej wartości iteracji przez algorytm
+                max_iterations = 1000
+            else:
+                self.ga.generations = int(self.Generation_Entry.get())
+                max_iterations = self.ga.generations
 
-            max_iterations = self.ga.generations
             populacja = self.ga.populacja()
 
         elif wybrany_algo == 'Mrówkowy':
@@ -192,8 +196,20 @@ class Window(tk.Tk):
         current_best = None
         cur_dist = 0.0
         cur_cost = 0.0
+        # zminne do wykresu zbieżności
+        dist_history = []
+        iter_history = []
 
-        for idx_gen in range(max_iterations):
+        # zmienne do przechowywania najleprzego rozwiązania
+        best_route = None
+        best_cost = float('inf')
+        best_dist = float('inf')
+
+        no_improve_iter = 0
+        stagnation = 50 # ilość zarezerwowanych prób
+
+        idx_gen = 0
+        while self.running and idx_gen < max_iterations:
             # sprawdzamy czy nie zostałą nacisnięty przycisk STOP
             if not self.running:
                 print("Algorytm został zatrzymany przez użytkownika.")
@@ -212,6 +228,21 @@ class Window(tk.Tk):
             elif wybrany_algo == 'Świetlika':
                 pass
 
+            if cur_cost < best_cost: # onowienie najlepszego znaczenia
+                best_cost = cur_cost
+                best_dist = cur_dist
+                best_route = current_best
+                no_improve_iter = 0
+            else:
+                if self.iterate_var.get():
+                    no_improve_iter += 1
+
+            dist_history.append(cur_dist)
+            iter_history.append(idx_gen)
+
+            if self.iterate_var.get() and no_improve_iter >= stagnation: # algorytm osiągnął zbieżności, nie ma sensu kontynuować
+                break
+
             # animowanie wykresów
             if self.anim_var.get() and current_best is not None:
                 krok = self.anim_step_scale.get()
@@ -225,19 +256,22 @@ class Window(tk.Tk):
                 text=f"Iteracja: {idx_gen + 1}\nDystans: {cur_dist:.2f}\nKoszt: {cur_cost:.4f}"
             )
 
-            # final
+            idx_gen +=1
+
+        # final
         end_time = time.time()
         duration = end_time - start_time
 
         # rysowanie wyniku
         if current_best is not None:
-            self.graph_manager.draw_route_left(self.cities, current_best)
+            self.graph_manager.draw_route_left(self.cities, best_route)
             self.stats_best_label.config(
-                text=f"Najlepszy Dystans: {cur_dist:.2f}\nNajlepszy koszt: {cur_cost:.4f}\nCzas: {duration:.4f} s"
+                text=f"Najlepszy Dystans: {best_dist:.2f}\nNajlepszy koszt: {best_cost:.4f}\nCzas: {duration:.4f} s"
             )
 
         # aplikacja zwolniona od wykonania
         self.running = False
+        self.graph_manager.convergence_graph(iter_history, dist_history) #rysowanie wykresu zbieżności na koniec
 
     def stop_algorithm(self):
         if self.running:
@@ -259,6 +293,7 @@ class Window(tk.Tk):
         self.geometry("1500x900")
         self.running = False
         self.ga = Genetyczny_alg()
+        self.aco = Mrowkowy_alg()
         self.cities = []
         #----------------------------------Frame division---------------------------------------------
         self.left_panel = tk.Frame(self, width=300, bg="#f0f0f0", padx=10, pady=10)

@@ -1,3 +1,5 @@
+from tkinter import Toplevel
+
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -121,3 +123,25 @@ class Graphs:
         self.ax_right.set_xlim(min(self.x)-0.5, max(self.x)+0.5)
         self.ax_right.set_ylim(min(self.y)-0.5, max(self.y)+0.5)
         self.canvas_right.draw()
+
+    def convergence_graph(self, iterations, distances): # wykres zbieżności w osobnym oknie
+        graph_win = Toplevel()
+        graph_win.title("Wykres zbieżności algorytmu")
+        graph_win.geometry("800x700")
+
+        fig = Figure(figsize=(6, 4), dpi=100)
+        ax = fig.add_subplot(111)
+
+        # Rysujemy linię zbieżności
+        ax.plot(iterations, distances, color='purple', linestyle='-', linewidth=1.5, label='Dystans')
+
+        ax.set_title("Zbieżność algorytmu w procesie optymalizacji", fontsize=11, fontweight='bold')
+        ax.set_xlabel("Iteracja", fontsize=10)
+        ax.set_ylabel("Dystans", fontsize=10)
+        ax.grid(True, linestyle='--', alpha=0.5)
+        ax.legend()
+
+        # Osadzamy wykres w oknie Tkinter
+        canvas = FigureCanvasTkAgg(fig, master=graph_win)
+        canvas.get_tk_widget().pack(fill="both", expand=True)
+        canvas.draw()

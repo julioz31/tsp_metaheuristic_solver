@@ -27,7 +27,7 @@ class Genetyczny_alg:
                     y1 = cities[i][1]
                     y2 = cities[j][1]
 
-                    base_dist = math.sqrt((x1 - x2)**2 + (y1-y2)**2)  # dist(p1, p2)
+                    base_dist = math.sqrt((x1 - x2)**2 + (y1-y2)**2)
                     self.distances[(i,j)] = base_dist
 
     def total_dystans(self, route):
